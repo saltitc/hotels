@@ -1,8 +1,8 @@
 """Create users, bookings and rooms tables
 
-Revision ID: 3450063004b0
+Revision ID: a5b47857e4fb
 Revises: 1737320df8a3
-Create Date: 2023-11-26 23:24:43.768767
+Create Date: 2023-11-26 23:34:12.839749
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3450063004b0'
+revision: str = 'a5b47857e4fb'
 down_revision: Union[str, None] = '1737320df8a3'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('hotel_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('desription', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=False),
     sa.Column('price', sa.Integer(), nullable=False),
     sa.Column('services', sa.JSON(), nullable=True),
     sa.Column('quantity', sa.Integer(), nullable=False),

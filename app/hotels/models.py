@@ -19,7 +19,7 @@ class Rooms(Base):
     id = Column(Integer, primary_key=True)
     hotel_id = Column(ForeignKey("hotels.id"), nullable=False)
     name = Column(String, nullable=False)
-    desription = Column(String, nullable=False)
+    description = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
     services = Column(JSON, nullable=True)
     quantity = Column(Integer, nullable=False)
