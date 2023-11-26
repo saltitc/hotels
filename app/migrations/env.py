@@ -11,13 +11,16 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from app.config import settings
 from app.database import Base
-from app.hotels.models import Hotels
+from app.hotels.models import Hotels, Rooms
+from app.users.models import Users
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", f"{settings.DATABASE_URL}?async_fallback=True")
+DATABASE_URL = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASS}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+
+config.set_main_option("sqlalchemy.url", f"{DATABASE_URL}?async_fallback=True")
 
 
 # Interpret the config file for Python logging.
