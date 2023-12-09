@@ -14,3 +14,10 @@ class SBooking(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SUserBooking(SBooking):
+    image_id: int
+    name: str
+    description: str
+    services: list[str]

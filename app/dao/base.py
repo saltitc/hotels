@@ -31,5 +31,7 @@ class BaseDAO:
     async def add(cls, **data):
         async with async_session_maker() as session:
             query = insert(cls.model).values(**data)
-            await session.execute(query)
+            result = await session.execute(query)
             await session.commit()
+            await session.refresh()
+            return result.scalar_one()
