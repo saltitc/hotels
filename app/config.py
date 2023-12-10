@@ -8,6 +8,14 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
     
+    REDIS_HOST: str
+    REDIS_PORT: int
+    
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
+    
     ALGORITHM: str
     SECRET_KEY: str
 

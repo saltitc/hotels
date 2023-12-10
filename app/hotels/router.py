@@ -1,5 +1,7 @@
+import asyncio
 from datetime import date
 from fastapi import APIRouter
+from fastapi_cache.decorator import cache
 from app.exceptions import NotFoundException
 from app.hotels.dao import HotelsDAO
 from app.hotels.schemas import SFreeHotels, SHotels
@@ -11,6 +13,7 @@ router.include_router(rooms_router)
 
 
 @router.get("")
+@cache(expire=60)
 async def get_hotels():
     return await HotelsDAO.find_all()
 
