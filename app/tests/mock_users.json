@@ -1,10 +1,18 @@
 [
-    {
-        "email": "test@test.com",
-        "hashed_password": "$2b$12$Q9GWnOOF5q091RHMJwcXIuaUGWnmYsgrnCSUuICDWbhzoUD8ZkRGO"
+    {   
+        "username": "johndoe",
+        "email": "john@doe.com",
+        "password": "$2b$12$Q9GWnOOF5q091RHMJwcXIuaUGWnmYsgrnCSUuICDWbhzoUD8ZkRGO",
+        "is_active": false,
+        "is_staff": false,
+        "is_superuser": false
     },
     {
-        "email": "user@example.com",
-        "hashed_password": "$2b$12$Q9GWnOOF5q091RHMJwcXIuaUGWnmYsgrnCSUuICDWbhzoUD8ZkRGO"
+        "username": "mariavon",
+        "email": "maria@von.com",
+        "password": "$2b$12$Q9GWnOOF5q091RHMJwcXIuaUGWnmYsgrnCSUuICDWbhzoUD8ZkRGO",
+        "is_active": false,
+        "is_staff": false,
+        "is_superuser": false
     }
 ]

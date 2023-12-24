@@ -1,32 +1,50 @@
 from httpx import AsyncClient
 import pytest
+from fastapi import status
+from params import REGISTER_DATA
+
+pytest.mark.parametrize()
 
 
-@pytest.mark.parametrize(
-    "email,password,status_code",
-    [
-        ("kot@pes.com", "kotopes", 200),
-        ("kot@pes.com", "kot0pes", 409),
-        ("abcde", "abcde", 422),
-    ],
-)
-async def test_register_user(email, password, status_code, ac: AsyncClient):
-    response = await ac.post(
-        "/auth/register", json={"email": email, "password": password}
+class TestUsersAPI:
+    @pytest.mark.parametrize(
+        "username, email, password1, password2, status_code, response_json",
+        REGISTER_DATA,
     )
-    assert response.status_code == status_code
+    async def test_register_user(
+        self,
+        username,
+        email,
+        password1,
+        password2,
+        status_code,
+        response_json,
+        ac: AsyncClient,
+    ):
+        response = await ac.post(
+            "/auth/register",
+            json={
+                "username": username,
+                "email": email,
+                "password1": password1,
+                "password2": password2,
+            },
+        )
+        assert response.json() == response_json
+        assert response.status_code == status_code
 
-
-@pytest.mark.parametrize(
-    "email,password,status_code", [
-        ("test@test.com", "test", 200),
-        ("user@example.com", "test", 200),
-        ("wrong@example.com", "wrong", 401),
-        ("abcde", "abcde", 422),
-    ],
-)
-async def test_login_user(email, password, status_code, ac: AsyncClient):
-    response = await ac.post(
-        "/auth/login", json={"email": email, "password": password}
+    @pytest.mark.parametrize(
+        "username,password,status_code",
+        [
+            ("johndoe", "test", 200),
+            ("mariavon", "test", 200),
+            ("wronguser", "wrong", 401),
+        ],
     )
-    assert response.status_code == status_code
+    async def test_login_user(self, username, password, status_code, ac: AsyncClient):
+        response = await ac.post(
+            "/auth/login", json={"username": username, "password": password}
+        )
+        assert response.status_code == status_code
+
+    

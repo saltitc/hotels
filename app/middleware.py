@@ -1,6 +1,6 @@
 from fastapi import Request
 from sqladmin.authentication import AuthenticationBackend
-from app.users.auth import authenticate_user, create_access_token
+from app.users.auth import authenticate_user
 
 from app.users.dependencies import get_current_user
 
@@ -9,11 +9,13 @@ class AdminAuthJWTMiddleware(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
         form = await request.form()
         email, password = form["username"], form["password"]
-        user = await authenticate_user(email, password)
+        user_data = await authenticate_user(email, password)
 
-        if user:
-            access_token = create_access_token({"sub": str(user.id)})
-            request.session.update({"token": access_token})
+        if user_data:
+            request.session.update({
+                "access_token": user_data["access_token"],
+                "refresh_token": user_data["refresh_token"]
+            })
 
         return True
 
