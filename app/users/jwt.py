@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
+import time
 
 from jose import JWTError, jwt
 
@@ -8,7 +9,6 @@ from app.users.dao import UsersDAO
 from app.users.exceptions import (
     IncorrectTokenFormatException,
     TokenExpiredException,
-    UserIsNotPresentException,
 )
 from app.users.models import Users
 
@@ -24,16 +24,16 @@ def _create_token(user: Users, token_type: TokenType) -> str:
     if token_type == TokenType.REFRESH:
         minutes = auth_config.REFRESH_TOKEN_EXPIRE_MINUTES
         secret = auth_config.REFRESH_TOKEN_SECRET
-    expires = (datetime.utcnow() + timedelta(minutes=minutes)).isoformat()
-
+    expires = datetime.utcnow() + timedelta(minutes=minutes)
     data = {
         "user_id": user.id,
         "username": user.username,
         "token_type": token_type,
-        "expires": expires,
+        "expires": expires.isoformat(),
     }
-
-    return jwt.encode(data, key=secret, algorithm=auth_config.ALGORITHM)
+    encoded_token = jwt.encode(data, key=secret, algorithm=auth_config.ALGORITHM)
+    exp = time.strftime('%a, %d-%b-%Y %T GMT', time.gmtime(time.time() + minutes))
+    return {"token": encoded_token, "expires": exp}
 
 
 def create_access_token(user: Users) -> str:
@@ -52,8 +52,6 @@ def create_tokens(user: Users) -> dict[str, str]:
         TokenType.ACCESS.value: access,
         TokenType.REFRESH.value: refresh,
     }
-
-    #
 
 
 def parse_token(
@@ -92,6 +90,7 @@ def parse_token(
         "expires": expires,
         "token_type": token_type,
     }
+
 
 async def refresh_tokens(refresh_token: str) -> dict[str]:
     token_data = parse_token(refresh_token, TokenType.REFRESH)

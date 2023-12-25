@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from app.users.auth import (
     authenticate_user,
     get_password_hash,
@@ -7,6 +7,7 @@ from app.users.auth import (
 from app.users.dependencies import get_current_user
 from app.users.exceptions import (
     PasswordsAreNotEqualException,
+    TokenAbsentException,
     UserAlreadyExistsException,
 )
 from app.users.jwt import refresh_tokens
@@ -37,24 +38,38 @@ async def register_user(user_data: UserRegisterSchema):
 async def login_user(response: Response, user_data: UserLoginSchema):
     user_data = await authenticate_user(user_data.username, user_data.password)
     response.set_cookie(
-        "booking_access_token", user_data["access_token"], httponly=True
+        "booking_access_token",
+        user_data["access_token"]["token"],
+        httponly=True,
+        expires=user_data["access_token"]["expires"],
     )
     response.set_cookie(
-        "booking_refresh_token", user_data["refresh_token"], httponly=True
+        "booking_refresh_token",
+        user_data["refresh_token"]["token"],
+        httponly=True,
+        expires=user_data["refresh_token"]["expires"],
     )
     return "Вы авторизованы"
 
 
 @router.post("/refresh")
-async def refresh(response: Response, refresh_token: RefreshToken):
-    user_data = await refresh_tokens(refresh_token.refresh_token)
-    response.set_cookie(
-        "booking_access_token", user_data["access_token"], httponly=True
-    )
-    response.set_cookie(
-        "booking_refresh_token", user_data["refresh_token"], httponly=True
-    )
-    return "Токены обновлены"
+async def refresh(request: Request, response: Response):
+    if request.cookies.get("booking_refresh_token"):
+        user_data = await refresh_tokens(request.cookies.get("booking_refresh_token"))
+        response.set_cookie(
+            "booking_access_token",
+            user_data["access_token"]["token"],
+            httponly=True,
+            expires=user_data["access_token"]["expires"],
+        )
+        response.set_cookie(
+            "booking_refresh_token",
+            user_data["refresh_token"]["token"],
+            httponly=True,
+            expires=user_data["refresh_token"]["expires"],
+        )
+        return "Токены обновлены"
+    raise TokenAbsentException
 
 
 @router.post("/logout")
